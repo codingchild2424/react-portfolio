@@ -1,13 +1,15 @@
 # 개발환경
 docker node:14.16.1
 
-docker run -d -it -p 3000:3000 --name node_dev3 -v /Users/unggi/Documents/Coding:/app node:14.16.1
+docker run -d -it -p 3000:3000 --name node_dev4 -v /Users/unggi/Documents/Coding:/app node:14.16.1
 
-docker exec -it node_dev3 /bin/bash
+docker exec -it node_dev4 /bin/bash
 
 # 리액트 실행
 
 npm start
+
+#
 
 
 # reference
