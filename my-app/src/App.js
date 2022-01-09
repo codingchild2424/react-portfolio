@@ -1,52 +1,61 @@
 import React from 'react';
-import propTypes from 'prop-types';
+import axios from 'axios';
+import Movie from './Movie';
 
-const movie_list = [
-  {
-    id: 1,
-    name: 'forest gump',
-    image: 'https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg',
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: 'joje',
-    image: 'https://w.namu.la/s/4007807a1c370b447455a9c957da64fafb7b753cdd70a9529cac8a0348cb5a445278bab57fb017be153c1ef9ca323ba483c8235f0a61398f25fdf07a5802800d68b0369e5d7277b0386d01ce5aa993f1b0c81fc51922bed5e8fbb6a739292cbb',
-    rating: 4.9,
+class App extends React.Component {
+
+  state = {
+    isLoading: true,
+    movies: [],
+  };
+
+  //async, await를 사용해서 데이터를 받아올때까지 기다리도록 함
+  getMovies = async () => {
+
+    const {
+      data: {
+        data: { movies },
+      },
+    } = await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating");
+    //setState를 활용해서 state 값을 설정함
+    this.setState({ movies, isLoading: false });
+
+  };
+
+  //render() 뒤에 실행됨
+  componentDidMount() {
+    // 영화 데이터 로딩!
+    this.getMovies();
   }
-];
 
-function Movie( { movie_name, picture, rating } ) {
-  return (
-    <div>
-      <h1>I like { movie_name }</h1>
-      <h3>{ rating }</h3>
-      <img src = { picture } alt = { movie_name } />
-    </div>
-  );
+  render() {
+
+    const { isLoading, movies } = this.state;
+
+    return (
+      <section class = "container">
+        {isLoading ? (
+          <div class = "loader">
+            <span class = "loader__text">'Loading...'</span>
+          </div>
+        ) : (
+          <div class = "movies">
+            {
+              movies.map((movie) => (
+                  <Movie
+                    key = {movie.id}
+                    id = {movie.id}
+                    year = {movie.year}
+                    title = {movie.title}
+                    summary = {movie.summary}
+                    poster = {movie.medium_cover_image}
+                  />
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  }
 }
-
-function App() {
-  return (
-  <div>
-    {movie_list.map(
-      data => (
-        <Movie 
-          key = {data.id} 
-          movie_name = {data.name} 
-          picture = {data.image}
-          rating = {data.rating}
-        />
-      )
-    )}
-  </div>
-  );
-}
-
-Movie.propTypes = {
-  movie_name: propTypes.string.isRequired,
-  picture: propTypes.string.isRequired,
-  rating: propTypes.number,
-};
 
 export default App;
